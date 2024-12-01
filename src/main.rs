@@ -1,10 +1,11 @@
-use std::{fs::File, io::Read, path::Path};
+use std::{fs::File, io::Read, path::Path, time::Instant};
 
 use days::*;
 
 mod days;
 
 const DAY: u16 = 1;
+const TIMER_ACTIVE: bool = false;
 
 fn main() {
     let path_str = format!("res/day_{}.txt", DAY);
@@ -20,6 +21,8 @@ fn main() {
     if file_string.chars().all(|c| c.is_ascii_whitespace()) {
         panic!("res/day_{}.txt is empty!", DAY);
     }
+
+    let now = Instant::now();
 
     // Functions and arguments start with an underscore to not give compiler warnings
     match DAY {
@@ -51,5 +54,22 @@ fn main() {
 
         0 => panic!("There is no 0th of December!"),
         _ => panic!("Christmas has passed :(")
+    }
+
+    if TIMER_ACTIVE {
+        let elapsed = now.elapsed();
+        let nanos = elapsed.as_nanos();
+        if elapsed.as_secs() > 1 {
+            println!("Day {} took {} s", DAY, elapsed.as_secs_f64());
+        }
+        else if elapsed.as_millis() > 1 {
+            println!("Day {} took {} ms", DAY, nanos as f64 / 1_000_000_f64);
+        }
+        else if elapsed.as_micros() > 1 {
+            println!("Day {} took {} us", DAY, nanos as f64 / 1_000_f64);
+        }
+        else {
+            println!("Day {} took {} ns", DAY, nanos);
+        }
     }
 }

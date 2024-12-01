@@ -1,5 +1,5 @@
+#![allow(unused)]
 
-
-pub fn _run(_file_input: &str) {
+pub fn run(file_input: &str) {
 
 }

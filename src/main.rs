@@ -1,5 +1,7 @@
 use std::{fs::File, io::Read, path::Path};
 
+use days::*;
+
 mod days;
 
 const DAY: u16 = 1;
@@ -21,31 +23,31 @@ fn main() {
 
     // Functions and arguments start with an underscore to not give compiler warnings
     match DAY {
-        1 => days::day_1::_run(&file_string),
-        2 => days::day_1::_run(&file_string),
-        3 => days::day_1::_run(&file_string),
-        4 => days::day_1::_run(&file_string),
-        5 => days::day_1::_run(&file_string),
-        6 => days::day_1::_run(&file_string),
-        7 => days::day_1::_run(&file_string),
-        8 => days::day_1::_run(&file_string),
-        9 => days::day_1::_run(&file_string),
-        10 => days::day_1::_run(&file_string),
-        11 => days::day_1::_run(&file_string),
-        12 => days::day_1::_run(&file_string),
-        13 => days::day_1::_run(&file_string),
-        14 => days::day_1::_run(&file_string),
-        15 => days::day_1::_run(&file_string),
-        16 => days::day_1::_run(&file_string),
-        17 => days::day_1::_run(&file_string),
-        18 => days::day_1::_run(&file_string),
-        19 => days::day_1::_run(&file_string),
-        20 => days::day_1::_run(&file_string),
-        21 => days::day_1::_run(&file_string),
-        22 => days::day_1::_run(&file_string),
-        23 => days::day_1::_run(&file_string),
-        24 => days::day_1::_run(&file_string),
-        25 => days::day_1::_run(&file_string),
+        1  =>  day_1::run(&file_string),
+        2  =>  day_2::run(&file_string),
+        3  =>  day_3::run(&file_string),
+        4  =>  day_4::run(&file_string),
+        5  =>  day_5::run(&file_string),
+        6  =>  day_6::run(&file_string),
+        7  =>  day_7::run(&file_string),
+        8  =>  day_8::run(&file_string),
+        9  =>  day_9::run(&file_string),
+        10 => day_10::run(&file_string),
+        11 => day_11::run(&file_string),
+        12 => day_12::run(&file_string),
+        13 => day_13::run(&file_string),
+        14 => day_14::run(&file_string),
+        15 => day_15::run(&file_string),
+        16 => day_16::run(&file_string),
+        17 => day_17::run(&file_string),
+        18 => day_18::run(&file_string),
+        19 => day_19::run(&file_string),
+        20 => day_20::run(&file_string),
+        21 => day_21::run(&file_string),
+        22 => day_22::run(&file_string),
+        23 => day_23::run(&file_string),
+        24 => day_24::run(&file_string),
+        25 => day_25::run(&file_string),
 
         0 => panic!("There is no 0th of December!"),
         _ => panic!("Christmas has passed :(")

@@ -1,4 +1,4 @@
-use std::i32;
+use std::{collections::HashMap, i32, ops::AddAssign};
 
 pub fn run(file_input: &str) {
     let mut safe1 = 0;
@@ -6,43 +6,36 @@ pub fn run(file_input: &str) {
     
     file_input.lines().for_each(|line| {
         let sequence = line.split_ascii_whitespace().map(|s| s.parse::<i32>().expect("Wrong format detected. Not a number")).collect::<Vec<i32>>();
-        safe1 += is_100_safe(&sequence);
-        safe2 += is_safe_with_removed(&sequence);
+        safe1 += is_safe(&sequence);
+        safe2 += is_safe_with_removed(&sequence) | is_safe(&sequence);
     });
 
     println!("Problem 1: {}", safe1);
     println!("Problem 2: {}", safe2);
 }
 
-fn is_100_safe(sequence: &Vec<i32>) -> i32 {
-    if !sequence.iter().zip(sequence.iter().skip(1)).all(|(&a1, &a2)| {
-        a1.abs_diff(a2) <= 3
-    }) {
-        return 0;
-    }
-
-    (sequence.iter().try_fold(i32::MAX, |acc, &el| {
-        if acc > el {
-            Some(el)
-        } else {
-            None
-        }
-    }).is_some() || sequence.iter().try_fold(i32::MIN, |acc, &el| {
-        if acc < el {
-            Some(el)
-        } else {
-            None
-        }
-    }).is_some()) as i32
+fn is_safe(sequence: &Vec<i32>) -> i32 {
+    let mut differences: HashMap<i32, i32> = HashMap::new();
+    
+    sequence.windows(2).for_each(|window| {
+        let difference = window[0] - window[1];
+        match differences.get_mut(&difference) {
+            Some(instances) => { instances.add_assign(1); },
+            None => { differences.insert(difference, 1); },
+        };
+    });
+    
+    (
+        differences.keys().all(|key| [1, 2, 3].contains(key))
+        || differences.keys().all(|key| [-1, -2, -3].contains(key))
+    ) as i32
 }
 
 fn is_safe_with_removed(sequence: &Vec<i32>) -> i32 {
-    for i in 0..sequence.len() {
+    (0..sequence.len()).any(|i| {
         let mut seq_copy = sequence.clone();
         seq_copy.remove(i);
-        if is_100_safe(&seq_copy) == 1 {
-            return 1;
-        }
-    }
-    0
+        
+        is_safe(&seq_copy) == 1
+    }) as i32
 }

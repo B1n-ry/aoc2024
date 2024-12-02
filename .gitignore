@@ -1,4 +1,2 @@
 /target
-
-# Just a batch file to generate some repetitive files
-gen_days.bat
+/res

@@ -6,7 +6,7 @@ const DAY: u16 = 3;
 const TIMER_ACTIVE: bool = false;
 
 fn main() {
-    let path_str = format!("res/day_{}.txt", DAY);
+    let path_str = format!("res/day_{:02}.txt", DAY);
     let path: &Path = Path::new(path_str.as_str());
     
     let Ok(mut file) = File::open(path) else {

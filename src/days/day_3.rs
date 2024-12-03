@@ -7,31 +7,28 @@ pub fn run(file_input: &str) {
 fn find_multiples(file_input: &str, enable_use_flag: bool) -> i32 {
     let mut use_flag = true;
 
-    file_input.split("mul(").map(|after_mul| {
-        let res = get_multiplication(after_mul, use_flag);
+    (0..file_input.len()).map(|i| &file_input[i..]).map(|slice| {
         if enable_use_flag {
-            let modified = format!("{}___", after_mul);
-            modified.as_bytes().to_vec().windows(7).for_each(|arr| {
-                if arr.starts_with(b"do()") {  // Starts with `do()`
-                    use_flag = true;
-                }
-                if arr.starts_with(b"don't()") {  // Starts with `don't()`
-                    use_flag = false;
-                }
-            });
-        };
-        res
-    }).sum::<i32>()
-}
+            if slice.starts_with("do()") { use_flag = true; }
+            if slice.starts_with("don't()") { use_flag = false; }
+        }
+        if slice.starts_with("mul(") {
+            let str_iterator = &mut slice[4..].chars();
+            let mut last_char = None;
+            let left_num = str_iterator.take_while(|&c| { last_char = Some(c); c.is_ascii_digit() }).collect::<String>();
+            if left_num.is_empty() || last_char != Some(',') {
+                return 0;
+            }
+            let mut last_char = None;
+            let right_num = str_iterator.take_while(|&c| { last_char = Some(c); c.is_ascii_digit() }).collect::<String>();
+            if right_num.is_empty() || last_char != Some(')') {
+                return 0;
+            }
 
-fn get_multiplication(after_mul: &str, use_flag: bool) -> i32 {
-    let Some((numbers, _)) = after_mul.split_once(')') else { return 0; };
-    let Some((left, right)) = numbers.split_once(',') else { return 0; };
-    if !left.chars().all(|c| c.is_digit(10)) || !right.chars().all(|c| c.is_digit(10)) { return 0; }
-
-    if use_flag {
-        left.parse::<i32>().expect("Failed to get number a second time") * right.parse::<i32>().expect("Failed to get number a second time")
-    } else {
+            if use_flag {
+                return left_num.parse::<i32>().ok().zip(right_num.parse::<i32>().ok()).map(|(right, left)| right * left).expect("Failed to get number a second time")
+            }
+        }
         0
-    }
+    }).sum()
 }

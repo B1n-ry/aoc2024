@@ -1,12 +1,12 @@
-pub mod day_1;
-pub mod day_2;
-pub mod day_3;
-pub mod day_4;
-pub mod day_5;
-pub mod day_6;
-pub mod day_7;
-pub mod day_8;
-pub mod day_9;
+pub mod day_01;
+pub mod day_02;
+pub mod day_03;
+pub mod day_04;
+pub mod day_05;
+pub mod day_06;
+pub mod day_07;
+pub mod day_08;
+pub mod day_09;
 pub mod day_10;
 pub mod day_11;
 pub mod day_12;
@@ -26,15 +26,15 @@ pub mod day_25;
  
 pub fn run_one(file_input: &str, day: u16) {
     match day {
-        1 => day_1::run(file_input),
-        2 => day_2::run(file_input),
-        3 => day_3::run(file_input),
-        4 => day_4::run(file_input),
-        5 => day_5::run(file_input),
-        6 => day_6::run(file_input),
-        7 => day_7::run(file_input),
-        8 => day_8::run(file_input),
-        9 => day_9::run(file_input),
+        01 => day_01::run(file_input),
+        02 => day_02::run(file_input),
+        03 => day_03::run(file_input),
+        04 => day_04::run(file_input),
+        05 => day_05::run(file_input),
+        06 => day_06::run(file_input),
+        07 => day_07::run(file_input),
+        08 => day_08::run(file_input),
+        09 => day_09::run(file_input),
         10 => day_10::run(file_input),
         11 => day_11::run(file_input),
         12 => day_12::run(file_input),

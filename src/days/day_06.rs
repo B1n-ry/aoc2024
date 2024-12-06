@@ -1,5 +1,6 @@
-use std::{collections::{hash_map::Entry, HashMap, HashSet}, fmt::Display, ops::AddAssign, usize};
+use std::{collections::{HashMap, HashSet}, fmt::Display, ops::AddAssign, usize};
 
+#[allow(unused)]
 struct Grid<T> {
     grid: Vec<Vec<T>>,
     width: usize,
@@ -7,16 +8,20 @@ struct Grid<T> {
 }
 
 impl<T> Grid<T> {
+    #[allow(unused)]
     fn get(&self, x: usize, y: usize) -> Option<&T> {
         self.grid.get(y).map_or(None, |o| o.get(x))
     }
+    #[allow(unused)]
     fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut T> {
         self.grid.get_mut(y).map_or(None, |o| o.get_mut(x))
     }
+    #[allow(unused)]
     fn set(&mut self, x: usize, y: usize, replacement: T) {
         let Some(old) = self.get_mut(x, y) else { return; };
         *old = replacement;
     }
+    #[allow(unused)]
     fn find_first(&self, pred: impl Fn(&T) -> bool) -> Option<(usize, usize)> {
         for (y, row) in self.grid.iter().enumerate() {
             for (x, value) in row.iter().enumerate() {
@@ -31,11 +36,29 @@ impl<T> Grid<T> {
 impl Grid<char> {
     /// Find based on a set of coordinates and a direction if loop will form
     /// Returns weather or not the path is a loop, and all coordinates (bundled with direction) is in said path
-    fn will_loop_from(pos: (usize, usize), direction: Direction, known_loops: &HashSet<(usize, usize, Direction)>) -> (bool, HashSet<(usize, usize, Direction)>) {
-        let (x, y) = pos;
-        if known_loops.contains(&(x, y, direction)) {
+    fn will_loop_from(&self, pos: (usize, usize), direction: Direction) -> bool {
+        let (mut x, mut y) = pos;
+        let mut current_dir = direction;
+        let mut path_includes = HashSet::new();
 
+        while let Some((next_char, next_x, next_y)) = {
+            let (next_x, next_y) = current_dir.step_from((x, y));
+            self.get(next_x, next_y).map(|&c| (c, next_x, next_y))
+        } {
+            if next_char == '#' {
+                current_dir.turn_90_right();
+                continue;
+            }
+
+            if path_includes.contains(&(x, y, current_dir)) {
+                return true;
+            }
+            path_includes.insert((x, y, current_dir));
+
+            (x, y) = (next_x, next_y);
         }
+
+        false
     }
 }
 
@@ -89,13 +112,14 @@ impl Direction {
 
 pub fn run(file_input: &str) {
     let mut guard_dir = Direction::Up;
-    let grid: Grid<char> = file_input.lines().map(|l| l.chars().collect()).collect();
+    let mut grid: Grid<char> = file_input.lines().map(|l| l.chars().collect()).collect();
     let (mut guard_x, mut guard_y) = grid.find_first(|&c| c == '^').expect("Error: No guard (facing up) was found!");
 
     let mut explored = 0;  // Start is explored
     let mut ways_to_limbo = 0;
 
-    let mut already_visited: HashMap<(usize, usize), Vec<Direction>> = HashMap::new();
+    let mut already_visited: HashSet<(usize, usize)> = HashSet::new();
+    let mut obstruction_positions: HashSet<(usize, usize)> = HashSet::new();
 
     while let Some((next_char, x, y)) = {
         let (x, y) = guard_dir.step_from((guard_x, guard_y));
@@ -106,46 +130,31 @@ pub fn run(file_input: &str) {
             continue;
         }
 
+        if let Some(&cached) = grid.get(x, y) {
+            grid.set(x, y, '#');
+            let looping = grid.will_loop_from((guard_x, guard_y), guard_dir.rotated_90_right());
+            grid.set(x, y, cached);
+
+            if looping {
+                if !obstruction_positions.contains(&(x, y)) {
+                    ways_to_limbo.add_assign(1);
+                }
+                obstruction_positions.insert((x, y));
+            }
+        }
+
+
         let guard_pos = (guard_x, guard_y);
-        if let Some(_) = already_visited.get(&guard_pos) {
-            // If a 90 degree right turn would make us repeat a cycle, AND we could have gotten to where we're at currently
-            // meaning where we would place the stone we would not have walked over
-        } else {
+        if !already_visited.contains(&guard_pos) {
             explored.add_assign(1);
         }
-        let mut turned_dir = guard_dir.rotated_90_right();
-        let mut turned_pos = (guard_x, guard_y);
-        let mut visited_clone = already_visited.clone();
-        while let Some((next_char, x, y)) = {
-            let (x, y) = turned_dir.step_from(turned_pos);
-            grid.get(x, y).map(|&c| (c, x, y))
-        } {
-            if next_char == '#' {
-                turned_dir.turn_90_right();
-                continue;
-            }
-            if visited_clone.get(&turned_pos).is_some_and(|v| v.contains(&turned_dir)) {
-                ways_to_limbo.add_assign(1);
-                break;
-            }
-            match visited_clone.get_mut(&turned_pos) {
-                Some(v) => { v.push(turned_dir); },
-                None => { visited_clone.insert(guard_pos, vec![turned_dir]); },
-            }
-            turned_pos = (x, y);
-        }
 
-        match already_visited.get_mut(&guard_pos) {
-            Some(v) => { v.push(guard_dir); },
-            None => { already_visited.insert(guard_pos, vec![guard_dir]); },
-        }
+        already_visited.insert(guard_pos);
         (guard_x, guard_y) = (x, y);
     }
-    if !already_visited.contains_key(&(guard_x, guard_y)) {
+    if !already_visited.contains(&(guard_x, guard_y)) {
         explored.add_assign(1);
     }
-
-    // println!("{}", grid);
 
     println!("Problem 1: {}", explored);
     println!("Problem 2: {}", ways_to_limbo);

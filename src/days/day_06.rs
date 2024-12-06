@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, fmt::Display, ops::AddAssign, usize};
+use std::{collections::HashSet, fmt::Display, ops::AddAssign};
 
 #[allow(unused)]
 struct Grid<T> {
@@ -131,15 +131,17 @@ pub fn run(file_input: &str) {
         }
 
         if let Some(&cached) = grid.get(x, y) {
-            grid.set(x, y, '#');
-            let looping = grid.will_loop_from((guard_x, guard_y), guard_dir.rotated_90_right());
-            grid.set(x, y, cached);
+            if !already_visited.contains(&(x, y)) {
+                grid.set(x, y, '#');
+                let looping = grid.will_loop_from((guard_x, guard_y), guard_dir.rotated_90_right());
+                grid.set(x, y, cached);
 
-            if looping {
-                if !obstruction_positions.contains(&(x, y)) {
-                    ways_to_limbo.add_assign(1);
+                if looping {
+                    if !obstruction_positions.contains(&(x, y)) {
+                        ways_to_limbo.add_assign(1);
+                    }
+                    obstruction_positions.insert((x, y));
                 }
-                obstruction_positions.insert((x, y));
             }
         }
 

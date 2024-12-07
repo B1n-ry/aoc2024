@@ -8,20 +8,16 @@ struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-    #[allow(unused)]
     fn get(&self, x: usize, y: usize) -> Option<&T> {
         self.grid.get(y).map_or(None, |o| o.get(x))
     }
-    #[allow(unused)]
     fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut T> {
         self.grid.get_mut(y).map_or(None, |o| o.get_mut(x))
     }
-    #[allow(unused)]
     fn set(&mut self, x: usize, y: usize, replacement: T) {
         let Some(old) = self.get_mut(x, y) else { return; };
         *old = replacement;
     }
-    #[allow(unused)]
     fn find_first(&self, pred: impl Fn(&T) -> bool) -> Option<(usize, usize)> {
         for (y, row) in self.grid.iter().enumerate() {
             for (x, value) in row.iter().enumerate() {

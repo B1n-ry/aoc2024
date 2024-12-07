@@ -1,10 +1,9 @@
 pub fn run(file_input: &str) {
-    let calculations: [fn(u64, u64) -> u64; 2] = [
+    let calculations: [fn(u64, u64) -> u64; 3] = [
         |a, b| a * b,
         |a, b| a + b,
+        |a, b| a * 10_u64.pow((b as f32).log10() as u32 + 1) + b,
     ];
-
-    //assert_eq!(calculations[2](234, 765), 234765);
 
     let result: u64 = file_input.lines().map(|line| {
         let (res, expression) = line.split_once(": ").expect("Wrong format! ': ' not detected on line!");

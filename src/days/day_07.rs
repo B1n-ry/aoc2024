@@ -1,11 +1,19 @@
 pub fn run(file_input: &str) {
-    let calculations: [fn(u64, u64) -> u64; 3] = [
+    let mut calculations = vec![
         |a, b| a * b,
         |a, b| a + b,
-        |a, b| a * 10_u64.pow((b as f32).log10() as u32 + 1) + b,
     ];
 
-    let result: u64 = file_input.lines().map(|line| {
+    let p1 = get_results(file_input, &calculations);
+    println!("Problem 1: {}", p1);
+
+    calculations.push(|a, b| a * 10_u64.pow((b as f32).log10() as u32 + 1) + b);
+    let p2 = get_results(file_input, &calculations);
+    println!("Problem 2: {}", p2);
+}
+
+fn get_results(file_input: &str, calculations: &Vec<fn(u64, u64) -> u64>) -> u64 {
+    file_input.lines().map(|line| {
         let (res, expression) = line.split_once(": ").expect("Wrong format! ': ' not detected on line!");
         let res_i: u64 = res.parse().expect("Wrong format! Result not digit!");
 
@@ -24,7 +32,5 @@ pub fn run(file_input: &str) {
             }
         }
         0
-    }).sum();
-
-    println!("Problem 2: {}", result);
+    }).sum()
 }

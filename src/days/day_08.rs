@@ -17,9 +17,11 @@ impl Grid {
     fn get(&self, x: usize, y: usize) -> Option<&char> {
         self.grid.get(y).and_then(|v| v.get(x))
     }
+    #[allow(dead_code)]
     fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut char> {
         self.grid.get_mut(y).and_then(|v| v.get_mut(x))
     }
+    #[allow(dead_code)]
     fn set(&mut self, x: usize, y: usize, c: char) {
         let Some(old) = self.get_mut(x, y) else { return; };
         *old = c;
@@ -41,7 +43,7 @@ impl Grid {
 pub fn run(file_input: &str) {
     let mut antenna_locations: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
     let double_vec = file_input.lines().map(|line| line.chars().collect()).collect();
-    let mut grid = Grid::from(double_vec);  // Moved value
+    let grid = Grid::from(double_vec);  // Moved value
 
     grid.for_each(|x, y, c| {
         if c != '.' {
@@ -86,7 +88,7 @@ pub fn run(file_input: &str) {
         antinodes
     }).collect();
 
-    println!("Problem 1: {}", antinodes.len());
+    println!("Problem 2: {}", antinodes.len());
 }
 
 impl Display for Grid {

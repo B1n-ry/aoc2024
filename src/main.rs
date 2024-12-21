@@ -2,7 +2,7 @@ use std::{fs::File, io::Read, path::Path, time::Instant};
 
 mod days;
 
-const DAY: u16 = 14;
+const DAY: u16 = 15;
 const TIMER_ACTIVE: bool = false;
 
 fn main() {

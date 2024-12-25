@@ -4,7 +4,7 @@ pub fn run(file_input: &str) {
     let c_reg: u64 = get_content(file_input, "Register C: ").parse().unwrap_or(0);
 
     let program = get_content(file_input, "Program: ");
-    let program: Vec<u8> = program.split(",").map(|s| s.parse().expect("Program encountered non-digit!")).collect();
+    let program: Vec<u8> = program.split(",").map(|s| s.parse::<u8>().expect("Program encountered non-digit!")).collect();
 
     let output = run_computer(&program, a_reg, b_reg, c_reg);
 
